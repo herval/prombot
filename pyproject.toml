@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "prombot"
+version = "0.1.0"
+description = "An LLM-powered PromQL assistant"
+authors = ["herval <hervalfreire@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "3.10.11"
+prometheus-http-client = "^1.0.0"
+crewai = "^0.79.4"
+crewai-tools = "^0.14.0"
+prometheus-api-client = "^0.5.5"
+tabulate = "^0.9.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
