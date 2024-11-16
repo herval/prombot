@@ -328,3 +328,535 @@ config:
         interval: 1
         values: 0-5
         operation: inc
+
+  # Gaming Platform Metrics
+  - name: player_concurrent_users
+    description: Number of players currently online
+    type: gauge
+    labels: [game_mode, region]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 100-10000
+        operation: set
+        labels:
+          game_mode: battle_royale
+          region: NA
+      - eval_time: 3600
+        interval: 1
+        values: 50-5000
+        operation: set
+        labels:
+          game_mode: team_deathmatch
+          region: EU
+
+  # IoT Device Metrics
+  - name: smart_device_temperature_celsius
+    description: Temperature readings from IoT devices
+    type: gauge
+    labels: [device_type, location]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 18-25
+        operation: set
+        labels:
+          device_type: thermostat
+          location: living_room
+      - eval_time: 3600
+        interval: 1
+        values: 150-180
+        operation: set
+        labels:
+          device_type: oven
+          location: kitchen
+
+  # AI Model Metrics
+  - name: model_inference_confidence
+    description: Confidence scores of AI model predictions
+    type: histogram
+    labels: [model_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.75-0.99
+        operation: observe
+        labels:
+          model_type: image_classification
+      - eval_time: 3600
+        interval: 1
+        values: 0.60-0.95
+        operation: observe
+        labels:
+          model_type: sentiment_analysis
+
+  # Social Media Platform Metrics
+  - name: viral_coefficient
+    description: Average number of new users invited by each existing user
+    type: gauge
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.1-2.5
+        operation: set
+
+  # Weather Station Metrics
+  - name: wind_speed_kmh
+    description: Current wind speed in kilometers per hour
+    type: gauge
+    labels: [location]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-120
+        operation: set
+        labels:
+          location: mountain_peak
+      - eval_time: 3600
+        interval: 1
+        values: 0-40
+        operation: set
+        labels:
+          location: valley
+
+  # Content Delivery Network Metrics
+  - name: cdn_cache_age_seconds
+    description: Age of content in CDN cache
+    type: histogram
+    labels: [content_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-86400
+        operation: observe
+        labels:
+          content_type: video
+      - eval_time: 3600
+        interval: 1
+        values: 0-3600
+        operation: observe
+        labels:
+          content_type: image
+
+  # Cryptocurrency Exchange Metrics
+  - name: trading_volume_btc
+    description: Trading volume in Bitcoin
+    type: counter
+    labels: [trading_pair]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.1-10
+        operation: inc
+        labels:
+          trading_pair: BTC_USD
+      - eval_time: 3600
+        interval: 1
+        values: 0.05-5
+        operation: inc
+        labels:
+          trading_pair: BTC_EUR
+
+  # Smart City Metrics
+  - name: traffic_congestion_index
+    description: Traffic congestion level (0-1)
+    type: gauge
+    labels: [district]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.1-0.9
+        operation: set
+        labels:
+          district: downtown
+      - eval_time: 3600
+        interval: 1
+        values: 0.05-0.6
+        operation: set
+        labels:
+          district: suburban
+
+  # Restaurant Kitchen Metrics
+  - name: order_preparation_time_seconds
+    description: Time taken to prepare orders
+    type: histogram
+    labels: [dish_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 300-900
+        operation: observe
+        labels:
+          dish_type: main_course
+      - eval_time: 3600
+        interval: 1
+        values: 60-300
+        operation: observe
+        labels:
+          dish_type: appetizer
+
+  # Space Station Metrics
+  - name: oxygen_level_percentage
+    description: Oxygen levels in different modules
+    type: gauge
+    labels: [module]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 19.5-21.5
+        operation: set
+        labels:
+          module: living_quarters
+      - eval_time: 3600
+        interval: 1
+        values: 19.0-22.0
+        operation: set
+        labels:
+          module: research_lab
+
+  # Renewable Energy Metrics
+  - name: solar_panel_efficiency
+    description: Current efficiency of solar panels
+    type: gauge
+    labels: [panel_array]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.15-0.22
+        operation: set
+        labels:
+          panel_array: rooftop
+      - eval_time: 3600
+        interval: 1
+        values: 0.18-0.25
+        operation: set
+        labels:
+          panel_array: ground
+
+  # AI Training Pipeline Metrics
+  - name: training_loss_value
+    description: Current loss value during model training
+    type: gauge
+    labels: [model_layer]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.001-0.1
+        operation: set
+        labels:
+          model_layer: conv1
+      - eval_time: 3600
+        interval: 1
+        values: 0.0005-0.05
+        operation: set
+        labels:
+          model_layer: conv2
+
+  # Virtual Reality Metrics
+  - name: motion_sickness_reports
+    description: Number of motion sickness reports in VR sessions
+    type: counter
+    labels: [app_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-5
+        operation: inc
+        labels:
+          app_type: gaming
+      - eval_time: 3600
+        interval: 1
+        values: 0-2
+        operation: inc
+        labels:
+          app_type: educational
+
+  # Coffee Shop IoT Metrics
+  - name: coffee_beans_remaining_kg
+    description: Remaining coffee beans in stock
+    type: gauge
+    labels: [bean_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-50
+        operation: set
+        labels:
+          bean_type: arabica
+      - eval_time: 3600
+        interval: 1
+        values: 0-30
+        operation: set
+        labels:
+          bean_type: robusta
+  # Service Health Metrics
+  - name: service_up
+    description: Whether the service is up (1) or down (0)
+    type: gauge
+    labels: [service_name, environment]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-1
+        operation: set
+        labels:
+          service_name: user-service
+          environment: production
+      - eval_time: 3600
+        interval: 1
+        values: 0-1
+        operation: set
+        labels:
+          service_name: payment-service
+          environment: production
+
+  # Circuit Breaker Metrics
+  - name: circuit_breaker_state
+    description: Current state of circuit breaker (0=closed, 1=half-open, 2=open)
+    type: gauge
+    labels: [service_name, downstream_service]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-2
+        operation: set
+        labels:
+          service_name: order-service
+          downstream_service: payment-service
+      - eval_time: 3600
+        interval: 1
+        values: 0-2
+        operation: set
+        labels:
+          service_name: cart-service
+          downstream_service: inventory-service
+
+  - name: circuit_breaker_failures_total
+    description: Total number of circuit breaker failures
+    type: counter
+    labels: [service_name, downstream_service, failure_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-10
+        operation: inc
+        labels:
+          service_name: order-service
+          downstream_service: payment-service
+          failure_type: timeout
+      - eval_time: 3600
+        interval: 1
+        values: 0-5
+        operation: inc
+        labels:
+          service_name: user-service
+          downstream_service: auth-service
+          failure_type: connection_failure
+
+  # Service Mesh Metrics
+  - name: mesh_request_duration_seconds
+    description: Duration of requests through service mesh
+    type: histogram
+    labels: [source_service, destination_service, route]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.001-0.5
+        operation: observe
+        labels:
+          source_service: frontend
+          destination_service: catalog-service
+          route: /api/products
+      - eval_time: 3600
+        interval: 1
+        values: 0.002-1.0
+        operation: observe
+        labels:
+          source_service: catalog-service
+          destination_service: inventory-service
+          route: /api/stock
+
+  - name: mesh_request_retry_total
+    description: Total number of retry attempts in service mesh
+    type: counter
+    labels: [source_service, destination_service]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-5
+        operation: inc
+        labels:
+          source_service: order-service
+          destination_service: payment-service
+      - eval_time: 3600
+        interval: 1
+        values: 0-3
+        operation: inc
+        labels:
+          source_service: cart-service
+          destination_service: pricing-service
+
+  # API Gateway Metrics
+  - name: gateway_request_total
+    description: Total requests handled by API gateway
+    type: counter
+    labels: [service, method, status_code]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1-100
+        operation: inc
+        labels:
+          service: user-service
+          method: POST
+          status_code: 201
+      - eval_time: 3600
+        interval: 1
+        values: 1-500
+        operation: inc
+        labels:
+          service: product-service
+          method: GET
+          status_code: 200
+
+  # Service Discovery Metrics
+  - name: service_discovery_lookup_duration_seconds
+    description: Time taken for service discovery lookups
+    type: histogram
+    labels: [service_name]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.001-0.1
+        operation: observe
+        labels:
+          service_name: user-service
+      - eval_time: 3600
+        interval: 1
+        values: 0.001-0.1
+        operation: observe
+        labels:
+          service_name: order-service
+
+  # Message Queue Metrics
+  - name: message_queue_depth
+    description: Current number of messages in queue
+    type: gauge
+    labels: [queue_name]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-1000
+        operation: set
+        labels:
+          queue_name: order-processing
+      - eval_time: 3600
+        interval: 1
+        values: 0-500
+        operation: set
+        labels:
+          queue_name: notification-service
+
+  - name: message_processing_duration_seconds
+    description: Time taken to process messages
+    type: histogram
+    labels: [queue_name, message_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.01-0.5
+        operation: observe
+        labels:
+          queue_name: order-processing
+          message_type: order_created
+      - eval_time: 3600
+        interval: 1
+        values: 0.005-0.2
+        operation: observe
+        labels:
+          queue_name: notification-service
+          message_type: email_notification
+
+  # Database Connection Pool Metrics
+  - name: db_connection_pool_active_connections
+    description: Number of active database connections
+    type: gauge
+    labels: [service_name, database]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1-50
+        operation: set
+        labels:
+          service_name: user-service
+          database: users_db
+      - eval_time: 3600
+        interval: 1
+        values: 1-30
+        operation: set
+        labels:
+          service_name: order-service
+          database: orders_db
+
+  # Rate Limiting Metrics
+  - name: rate_limit_exceeded_total
+    description: Number of times rate limit was exceeded
+    type: counter
+    labels: [service_name, endpoint]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-100
+        operation: inc
+        labels:
+          service_name: auth-service
+          endpoint: /api/tokens
+      - eval_time: 3600
+        interval: 1
+        values: 0-50
+        operation: inc
+        labels:
+          service_name: user-service
+          endpoint: /api/users
+
+  # Distributed Tracing Metrics
+  - name: trace_span_duration_seconds
+    description: Duration of trace spans
+    type: histogram
+    labels: [service_name, operation_name]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.001-0.1
+        operation: observe
+        labels:
+          service_name: order-service
+          operation_name: create_order
+      - eval_time: 3600
+        interval: 1
+        values: 0.001-0.05
+        operation: observe
+        labels:
+          service_name: payment-service
+          operation_name: process_payment
+
+  # Dependency Health Checks
+  - name: dependency_health_check_status
+    description: Status of dependency health checks (0=unhealthy, 1=healthy)
+    type: gauge
+    labels: [service_name, dependency_name]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-1
+        operation: set
+        labels:
+          service_name: order-service
+          dependency_name: payment-service
+      - eval_time: 3600
+        interval: 1
+        values: 0-1
+        operation: set
+        labels:
+          service_name: cart-service
+          dependency_name: product-service
