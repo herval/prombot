@@ -1,11 +1,13 @@
 import os
 from textwrap import dedent
+from typing import List, Optional
 
 from crewai import Agent, Crew, Task, Process, LLM
 from crewai_tools import tool
-from crewai_tools.tools.txt_search_tool.txt_search_tool import TXTSearchTool
 from dotenv import load_dotenv
 from prometheus_api_client import PrometheusConnect
+
+from prombot.rag_manager import RAGManager
 
 load_dotenv()
 
@@ -22,12 +24,33 @@ if __name__ == "__main__":
             disable_ssl=True,
         )
 
+    rag_manager = RAGManager(data_dir="runbooks", persist_dir="db")
+
+    print("Loading runbooks")
+    documents = rag_manager.load_documents()
+    vector_store = rag_manager.load_existing_vector_store()
+
 
     @tool
-    def list_metrics():
+    def retrieve_context(query: str) -> str:
         """
-        List all the metrics available in Prometheus
+        Retrieve context from the documents
 
+        :param query: Query to search in the documents
+        :return: Context from the documents
+        """
+        results = vector_store.similarity_search(query, k=3)
+        return "\n".join([doc.page_content for doc in results])
+
+
+    @tool
+    def list_metrics(substring: Optional[str] = None) -> List[str]:
+        """
+        List all the metrics available in Prometheus. You can narrow down the list by providing a substring to match metric names.
+
+        If you can't find any metrics containing the substring, consider listing without a substring!
+
+        :param name_pattern: Optional pattern to filter the metrics by a part of the name
         :return: List of metric names
         """
         # res = []
@@ -37,7 +60,11 @@ if __name__ == "__main__":
         #     )
         # return res
 
-        return prom.all_metrics()
+        metrics = prom.all_metrics()
+        if substring is not None:
+            metrics = [m for m in metrics if substring in m]
+
+        return metrics
 
 
     @tool
@@ -74,7 +101,7 @@ if __name__ == "__main__":
     query.cache_function = lambda a, b: False
 
     tools = [
-        TXTSearchTool("PromQL_Cheat_Sheet.md"),
+        retrieve_context,
     ]
 
     if prom_server_url is not None:
@@ -88,7 +115,7 @@ if __name__ == "__main__":
     if model.startswith('openai/'):
         print("Using OpenAI model: ", model)
         llm = LLM(
-            model = model,
+            model=model,
             api_key=os.environ['OPENAI_API_KEY'],
         )
     elif model.startswith("ollama/"):
@@ -123,6 +150,8 @@ if __name__ == "__main__":
         Whenever you make a query, always include the promql query in the response.
         
         Whenever you get data from Prometheus, always include the data in a well-formatted table as part of the response too.
+        
+        If your response includes too many metrics, consider summarizing the data or providing a high-level overview.
        
         ---
         
@@ -142,7 +171,7 @@ if __name__ == "__main__":
         agents=[chatbot],
         tasks=[chat],
         process=Process.sequential,
-        memory=True,
+        memory=False,
         verbose=debug_mode,
     )
 
