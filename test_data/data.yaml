@@ -5,7 +5,7 @@ config:
     type: counter
     labels: [method, endpoint, status, api_version, client_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-5
         operation: inc
@@ -15,7 +15,7 @@ config:
           status: 200
           api_version: v2
           client_type: mobile
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-3
         operation: inc
@@ -25,7 +25,7 @@ config:
           status: 201
           api_version: v2
           client_type: web
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-4
         operation: inc
@@ -35,7 +35,7 @@ config:
           status: 200
           api_version: v2
           client_type: desktop
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-2
         operation: inc
@@ -52,14 +52,14 @@ config:
     type: histogram
     labels: [method, endpoint]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.1-0.5
         operation: observe
         labels:
           method: GET
           endpoint: /api/v1/resource
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.2-0.7
         operation: observe
@@ -72,7 +72,7 @@ config:
     description: Total user and system CPU time spent in seconds
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.01-0.05
         operation: inc
@@ -81,7 +81,7 @@ config:
     description: Resident memory size in bytes
     type: gauge
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 500000000-2000000000
         operation: set
@@ -92,13 +92,13 @@ config:
     type: summary
     labels: [query_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.001-0.1
         operation: observe
         labels:
           query_type: SELECT
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.005-0.2
         operation: observe
@@ -109,7 +109,7 @@ config:
     description: Ratio of cache hits to total cache accesses
     type: gauge
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.5-1.0
         operation: set
@@ -119,7 +119,7 @@ config:
     description: Total number of user registrations
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-3
         operation: inc
@@ -129,13 +129,13 @@ config:
     type: counter
     labels: [item_category]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-5
         operation: inc
         labels:
           item_category: electronics
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-4
         operation: inc
@@ -146,7 +146,7 @@ config:
     description: Total number of bytes read from disk
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1000000-5000000
         operation: inc
@@ -155,7 +155,7 @@ config:
     description: Total number of bytes written to disk
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1000000-5000000
         operation: inc
@@ -164,7 +164,7 @@ config:
     description: System load average over the last 1 minute
     type: gauge
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.1-2.0
         operation: set
@@ -173,7 +173,7 @@ config:
     description: System load average over the last 5 minutes
     type: gauge
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.2-1.5
         operation: set
@@ -182,7 +182,7 @@ config:
     description: System load average over the last 15 minutes
     type: gauge
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.1-1.0
         operation: set
@@ -192,7 +192,7 @@ config:
     description: Total number of bytes received over the network
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1000000-50000000
         operation: inc
@@ -201,7 +201,7 @@ config:
     description: Total number of bytes transmitted over the network
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1000000-50000000
         operation: inc
@@ -210,7 +210,7 @@ config:
     description: Total number of network errors
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-10
         operation: inc
@@ -221,13 +221,13 @@ config:
     type: gauge
     labels: [user_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 10-200
         operation: set
         labels:
           user_type: premium
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 50-500
         operation: set
@@ -239,13 +239,13 @@ config:
     type: counter
     labels: [region]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-10
         operation: inc
         labels:
           region: US
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-8
         operation: inc
@@ -257,13 +257,13 @@ config:
     type: gauge
     labels: [currency]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1000-100000
         operation: set
         labels:
           currency: USD
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 800-50000
         operation: set
@@ -275,7 +275,7 @@ config:
     description: Number of pending background jobs
     type: gauge
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-500
         operation: set
@@ -284,7 +284,7 @@ config:
     description: Total number of failed background jobs
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-20
         operation: inc
@@ -293,7 +293,7 @@ config:
     description: Duration of background job processing in seconds
     type: summary
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.1-2.0
         operation: observe
@@ -304,13 +304,13 @@ config:
     type: counter
     labels: [event_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 50-500
         operation: inc
         labels:
           event_type: click
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 10-200
         operation: inc
@@ -323,13 +323,13 @@ config:
     type: counter
     labels: [api_name]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-5
         operation: inc
         labels:
           api_name: payment_service
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-3
         operation: inc
@@ -340,7 +340,7 @@ config:
     description: Total number of deployments
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-2
         operation: inc
@@ -349,7 +349,7 @@ config:
     description: Total number of build failures
     type: counter
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-5
         operation: inc
@@ -360,14 +360,14 @@ config:
     type: gauge
     labels: [game_mode, region]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 100-10000
         operation: set
         labels:
           game_mode: battle_royale
           region: NA
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 50-5000
         operation: set
@@ -381,7 +381,7 @@ config:
     type: gauge
     labels: [metric_type, district, time_of_day]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.1-0.9
         operation: set
@@ -389,7 +389,7 @@ config:
           metric_type: traffic_density
           district: financial_district
           time_of_day: rush_hour
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.2-0.8
         operation: set
@@ -397,7 +397,7 @@ config:
           metric_type: parking_occupancy
           district: shopping_center
           time_of_day: afternoon
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.3-1.0
         operation: set
@@ -405,7 +405,7 @@ config:
           metric_type: air_quality_index
           district: industrial_zone
           time_of_day: midday
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.0-0.5
         operation: set
@@ -413,7 +413,7 @@ config:
           metric_type: noise_level
           district: residential_area
           time_of_day: night
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.4-0.95
         operation: set
@@ -428,7 +428,8 @@ config:
     type: gauge
     labels: [device_type, location, building_type, zone]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
+        time: 5
         interval: 1
         values: 18-25
         operation: set
@@ -437,7 +438,8 @@ config:
           location: data_center
           building_type: commercial
           zone: server_room
-      - eval_time: 3600
+      - eval_time: 5
+        time: 5
         interval: 1
         values: 150-180
         operation: set
@@ -446,7 +448,8 @@ config:
           location: steel_mill
           building_type: industrial
           zone: furnace_area
-      - eval_time: 3600
+      - eval_time: 5
+        time: 5
         interval: 1
         values: 2-8
         operation: set
@@ -455,7 +458,8 @@ config:
           location: supermarket
           building_type: retail
           zone: dairy_section
-      - eval_time: 3600
+      - eval_time: 5
+        time: 5
         interval: 1
         values: 20-30
         operation: set
@@ -464,7 +468,8 @@ config:
           location: museum
           building_type: cultural
           zone: art_gallery
-      - eval_time: 3600
+      - eval_time: 5
+        time: 5
         interval: 1
         values: 15-22
         operation: set
@@ -480,13 +485,13 @@ config:
     type: histogram
     labels: [model_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.75-0.99
         operation: observe
         labels:
           model_type: image_classification
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.60-0.95
         operation: observe
@@ -498,7 +503,7 @@ config:
     description: Average number of new users invited by each existing user
     type: gauge
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.1-2.5
         operation: set
@@ -509,7 +514,7 @@ config:
     type: gauge
     labels: [location, altitude, terrain_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-120
         operation: set
@@ -517,7 +522,7 @@ config:
           location: mount_kilimanjaro
           altitude: very_high
           terrain_type: mountain
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 10-80
         operation: set
@@ -525,7 +530,7 @@ config:
           location: amazon_rainforest
           altitude: low
           terrain_type: forest
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 20-160
         operation: set
@@ -533,7 +538,7 @@ config:
           location: antarctica_research_station
           altitude: high
           terrain_type: ice_shelf
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 5-70
         operation: set
@@ -541,7 +546,7 @@ config:
           location: great_barrier_reef
           altitude: sea_level
           terrain_type: marine
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 15-90
         operation: set
@@ -556,13 +561,13 @@ config:
     type: histogram
     labels: [content_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-86400
         operation: observe
         labels:
           content_type: video
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-3600
         operation: observe
@@ -575,7 +580,7 @@ config:
     type: counter
     labels: [trading_pair, exchange, market_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.1-10
         operation: inc
@@ -583,7 +588,7 @@ config:
           trading_pair: BTC_USD
           exchange: binance
           market_type: spot
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-100
         operation: inc
@@ -591,7 +596,7 @@ config:
           trading_pair: ETH_USD
           exchange: coinbase
           market_type: futures
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 100-1000
         operation: inc
@@ -599,7 +604,7 @@ config:
           trading_pair: DOGE_USD
           exchange: kraken
           market_type: margin
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.01-1
         operation: inc
@@ -607,7 +612,7 @@ config:
           trading_pair: SOL_USD
           exchange: ftx
           market_type: spot
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 10-500
         operation: inc
@@ -622,13 +627,13 @@ config:
     type: gauge
     labels: [district]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.1-0.9
         operation: set
         labels:
           district: downtown
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.05-0.6
         operation: set
@@ -641,13 +646,13 @@ config:
     type: histogram
     labels: [dish_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 300-900
         operation: observe
         labels:
           dish_type: main_course
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 60-300
         operation: observe
@@ -660,7 +665,7 @@ config:
     type: gauge
     labels: [system_type, module, priority]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 19.5-21.5
         operation: set
@@ -668,7 +673,7 @@ config:
           system_type: oxygen_level
           module: habitation
           priority: critical
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 20-25
         operation: set
@@ -676,7 +681,7 @@ config:
           system_type: temperature
           module: greenhouse
           priority: high
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 45-55
         operation: set
@@ -684,7 +689,7 @@ config:
           system_type: humidity
           module: science_lab
           priority: medium
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-100
         operation: set
@@ -692,7 +697,7 @@ config:
           system_type: power_level
           module: solar_array
           priority: critical
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-15
         operation: set
@@ -707,13 +712,13 @@ config:
     type: gauge
     labels: [module]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 19.5-21.5
         operation: set
         labels:
           module: living_quarters
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 19.0-22.0
         operation: set
@@ -727,7 +732,7 @@ config:
     type: gauge
     labels: [energy_type, location, weather_condition]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.15-0.22
         operation: set
@@ -735,7 +740,7 @@ config:
           energy_type: solar_panel
           location: desert_farm
           weather_condition: sunny
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.3-0.8
         operation: set
@@ -743,7 +748,7 @@ config:
           energy_type: wind_turbine
           location: offshore_array
           weather_condition: windy
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.4-0.9
         operation: set
@@ -751,7 +756,7 @@ config:
           energy_type: hydroelectric
           location: mountain_dam
           weather_condition: rainy
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.6-0.95
         operation: set
@@ -759,7 +764,7 @@ config:
           energy_type: geothermal
           location: volcanic_region
           weather_condition: any
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.2-0.7
         operation: set
@@ -774,13 +779,13 @@ config:
     type: gauge
     labels: [panel_array]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.15-0.22
         operation: set
         labels:
           panel_array: rooftop
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.18-0.25
         operation: set
@@ -793,7 +798,7 @@ config:
     type: gauge
     labels: [experience_type, platform, user_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-100
         operation: set
@@ -801,7 +806,7 @@ config:
           experience_type: gaming
           platform: oculus
           user_type: casual
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-50
         operation: set
@@ -809,7 +814,7 @@ config:
           experience_type: training
           platform: vive
           user_type: professional
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-75
         operation: set
@@ -817,7 +822,7 @@ config:
           experience_type: social
           platform: psvr
           user_type: regular
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-25
         operation: set
@@ -825,7 +830,7 @@ config:
           experience_type: education
           platform: mixed_reality
           user_type: student
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-40
         operation: set
@@ -840,13 +845,13 @@ config:
     type: gauge
     labels: [model_layer]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.001-0.1
         operation: set
         labels:
           model_layer: conv1
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.0005-0.05
         operation: set
@@ -859,13 +864,13 @@ config:
     type: counter
     labels: [app_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-5
         operation: inc
         labels:
           app_type: gaming
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-2
         operation: inc
@@ -878,7 +883,7 @@ config:
     type: gauge
     labels: [metric_type, location, time_period]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-50
         operation: set
@@ -886,7 +891,7 @@ config:
           metric_type: beans_stock_kg
           location: main_storage
           time_period: morning
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 60-100
         operation: set
@@ -894,7 +899,7 @@ config:
           metric_type: grinder_efficiency
           location: barista_station
           time_period: peak_hours
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 85-98
         operation: set
@@ -902,7 +907,7 @@ config:
           metric_type: water_quality
           location: filtration_system
           time_period: daily
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-200
         operation: set
@@ -910,7 +915,7 @@ config:
           metric_type: drinks_queue
           location: pos_system
           time_period: lunch_rush
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 18-25
         operation: set
@@ -925,13 +930,13 @@ config:
     type: gauge
     labels: [bean_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-50
         operation: set
         labels:
           bean_type: arabica
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-30
         operation: set
@@ -943,14 +948,14 @@ config:
     type: gauge
     labels: [service_name, environment]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-1
         operation: set
         labels:
           service_name: user-service
           environment: production
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-1
         operation: set
@@ -964,14 +969,14 @@ config:
     type: gauge
     labels: [service_name, downstream_service]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-2
         operation: set
         labels:
           service_name: order-service
           downstream_service: payment-service
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-2
         operation: set
@@ -984,7 +989,7 @@ config:
     type: counter
     labels: [service_name, downstream_service, failure_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-10
         operation: inc
@@ -992,7 +997,7 @@ config:
           service_name: order-service
           downstream_service: payment-service
           failure_type: timeout
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-5
         operation: inc
@@ -1007,7 +1012,7 @@ config:
     type: histogram
     labels: [pattern_type, service_tier, protocol]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.001-0.1
         operation: observe
@@ -1015,7 +1020,7 @@ config:
           pattern_type: circuit_breaker
           service_tier: frontend
           protocol: http2
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.002-0.2
         operation: observe
@@ -1023,7 +1028,7 @@ config:
           pattern_type: retry
           service_tier: backend
           protocol: grpc
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.003-0.3
         operation: observe
@@ -1031,7 +1036,7 @@ config:
           pattern_type: timeout
           service_tier: middleware
           protocol: tcp
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.004-0.4
         operation: observe
@@ -1039,7 +1044,7 @@ config:
           pattern_type: bulkhead
           service_tier: database
           protocol: mysql
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.005-0.5
         operation: observe
@@ -1054,7 +1059,7 @@ config:
     type: histogram
     labels: [source_service, destination_service, route]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.001-0.5
         operation: observe
@@ -1062,7 +1067,7 @@ config:
           source_service: frontend
           destination_service: catalog-service
           route: /api/products
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.002-1.0
         operation: observe
@@ -1076,14 +1081,14 @@ config:
     type: counter
     labels: [source_service, destination_service]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-5
         operation: inc
         labels:
           source_service: order-service
           destination_service: payment-service
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-3
         operation: inc
@@ -1097,7 +1102,7 @@ config:
     type: counter
     labels: [service, method, status_code]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-100
         operation: inc
@@ -1105,7 +1110,7 @@ config:
           service: user-service
           method: POST
           status_code: 201
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-500
         operation: inc
@@ -1120,13 +1125,13 @@ config:
     type: histogram
     labels: [service_name]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.001-0.1
         operation: observe
         labels:
           service_name: user-service
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.001-0.1
         operation: observe
@@ -1139,7 +1144,7 @@ config:
     type: gauge
     labels: [database_type, operation_type, consistency_level]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-100
         operation: set
@@ -1147,7 +1152,7 @@ config:
           database_type: postgresql
           operation_type: write
           consistency_level: strong
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-200
         operation: set
@@ -1155,7 +1160,7 @@ config:
           database_type: mongodb
           operation_type: read
           consistency_level: eventual
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-150
         operation: set
@@ -1163,7 +1168,7 @@ config:
           database_type: cassandra
           operation_type: scan
           consistency_level: quorum
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-300
         operation: set
@@ -1171,7 +1176,7 @@ config:
           database_type: redis
           operation_type: cache
           consistency_level: weak
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-250
         operation: set
@@ -1186,13 +1191,13 @@ config:
     type: gauge
     labels: [queue_name]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-1000
         operation: set
         labels:
           queue_name: order-processing
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-500
         operation: set
@@ -1204,14 +1209,14 @@ config:
     type: histogram
     labels: [queue_name, message_type]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.01-0.5
         operation: observe
         labels:
           queue_name: order-processing
           message_type: order_created
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.005-0.2
         operation: observe
@@ -1225,14 +1230,14 @@ config:
     type: gauge
     labels: [service_name, database]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-50
         operation: set
         labels:
           service_name: user-service
           database: users_db
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 1-30
         operation: set
@@ -1246,20 +1251,27 @@ config:
     type: counter
     labels: [service_name, endpoint]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-100
         operation: inc
         labels:
           service_name: auth-service
           endpoint: /api/tokens
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-50
         operation: inc
         labels:
           service_name: user-service
           endpoint: /api/users
+      - eval_time: 5
+        interval: 1
+        values: 0-200
+        operation: inc
+        labels:
+          service_name: order-service
+          endpoint: /api/orders
 
   # Distributed Tracing Metrics
   - name: trace_span_duration_seconds
@@ -1267,20 +1279,41 @@ config:
     type: histogram
     labels: [service_name, operation_name]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.001-0.1
         operation: observe
         labels:
           service_name: order-service
           operation_name: create_order
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0.001-0.05
         operation: observe
         labels:
           service_name: payment-service
           operation_name: process_payment
+      - eval_time: 5
+        interval: 1
+        values: 0.001-0.2
+        operation: observe
+        labels:
+          service_name: user-service
+          operation_name: authenticate_user1
+      - eval_time: 5
+        interval: 1
+        values: 0.001-0.15
+        operation: observe
+        labels:
+          service_name: cart-service
+          operation_name: add
+      - eval_time: 5
+        interval: 1
+        values: 0.001-0.25
+        operation: observe
+        labels:
+          service_name: inventory-service
+          operation_name: update_stock
 
   # Dependency Health Checks
   - name: dependency_health_check_status
@@ -1288,17 +1321,38 @@ config:
     type: gauge
     labels: [service_name, dependency_name]
     sequence:
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-1
         operation: set
         labels:
           service_name: order-service
           dependency_name: payment-service
-      - eval_time: 3600
+      - eval_time: 5
         interval: 1
         values: 0-1
         operation: set
         labels:
           service_name: cart-service
           dependency_name: product-service
+      - eval_time: 5
+        interval: 1
+        values: 0-1
+        operation: set
+        labels:
+          service_name: user-service
+          dependency_name: auth
+      - eval_time: 5
+        interval: 1
+        values: 0-1
+        operation: set
+        labels:
+          service_name: inventory-service
+          dependency_name: stock-db
+      - eval_time: 5
+        interval: 1
+        values: 0-1
+        operation: set
+        labels:
+          service_name: notification-service
+          dependency_name: email-service
