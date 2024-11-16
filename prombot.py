@@ -27,8 +27,7 @@ if __name__ == "__main__":
     rag_manager = RAGManager(data_dir="runbooks", persist_dir="db")
 
     print("Loading runbooks")
-    documents = rag_manager.load_documents()
-    vector_store = rag_manager.load_existing_vector_store()
+    rag_manager.load_documents()
 
 
     @tool
@@ -39,7 +38,7 @@ if __name__ == "__main__":
         :param query: Query to search in the documents
         :return: Context from the documents
         """
-        results = vector_store.similarity_search(query, k=3)
+        results = rag_manager.search(query, k=3)
         return "\n".join([doc.page_content for doc in results])
 
 
@@ -53,12 +52,9 @@ if __name__ == "__main__":
         :param name_pattern: Optional pattern to filter the metrics by a part of the name
         :return: List of metric names
         """
-        # res = []
-        # for url in prom_urls:
-        #     res.extend(
-        #         requests.get(url).text.split('\n')
-        #     )
-        # return res
+
+        if(substring == "None"):
+            substring = None
 
         metrics = prom.all_metrics()
         if substring is not None:
