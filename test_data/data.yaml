@@ -1,0 +1,330 @@
+config:
+  # Application Performance Metrics
+  - name: http_requests_total
+    description: Total number of HTTP requests received
+    type: counter
+    labels: [method, endpoint, status]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1-5
+        operation: inc
+        labels:
+          method: GET
+          endpoint: /api/v1/resource
+          status: 200
+      - eval_time: 3600
+        interval: 1
+        values: 1-3
+        operation: inc
+        labels:
+          method: POST
+          endpoint: /api/v1/resource
+          status: 201
+
+  - name: http_request_duration_seconds
+    description: Duration of HTTP requests in seconds
+    type: histogram
+    labels: [method, endpoint]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.1-0.5
+        operation: observe
+        labels:
+          method: GET
+          endpoint: /api/v1/resource
+      - eval_time: 3600
+        interval: 1
+        values: 0.2-0.7
+        operation: observe
+        labels:
+          method: POST
+          endpoint: /api/v1/resource
+
+  # Resource Utilization Metrics
+  - name: process_cpu_seconds_total
+    description: Total user and system CPU time spent in seconds
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.01-0.05
+        operation: inc
+
+  - name: process_resident_memory_bytes
+    description: Resident memory size in bytes
+    type: gauge
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 500000000-2000000000
+        operation: set
+
+  # Application-Specific Metrics
+  - name: database_query_duration_seconds
+    description: Duration of database queries in seconds
+    type: summary
+    labels: [query_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.001-0.1
+        operation: observe
+        labels:
+          query_type: SELECT
+      - eval_time: 3600
+        interval: 1
+        values: 0.005-0.2
+        operation: observe
+        labels:
+          query_type: INSERT
+
+  - name: cache_hit_ratio
+    description: Ratio of cache hits to total cache accesses
+    type: gauge
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.5-1.0
+        operation: set
+
+  # Custom Business Metrics
+  - name: user_registrations_total
+    description: Total number of user registrations
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1-3
+        operation: inc
+
+  - name: items_sold_total
+    description: Total number of items sold
+    type: counter
+    labels: [item_category]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1-5
+        operation: inc
+        labels:
+          item_category: electronics
+      - eval_time: 3600
+        interval: 1
+        values: 1-4
+        operation: inc
+        labels:
+          item_category: clothing
+  # System Metrics
+  - name: disk_io_read_bytes_total
+    description: Total number of bytes read from disk
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1000000-5000000
+        operation: inc
+
+  - name: disk_io_write_bytes_total
+    description: Total number of bytes written to disk
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1000000-5000000
+        operation: inc
+
+  - name: system_load_1
+    description: System load average over the last 1 minute
+    type: gauge
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.1-2.0
+        operation: set
+
+  - name: system_load_5
+    description: System load average over the last 5 minutes
+    type: gauge
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.2-1.5
+        operation: set
+
+  - name: system_load_15
+    description: System load average over the last 15 minutes
+    type: gauge
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.1-1.0
+        operation: set
+
+  # Network Metrics
+  - name: network_receive_bytes_total
+    description: Total number of bytes received over the network
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1000000-50000000
+        operation: inc
+
+  - name: network_transmit_bytes_total
+    description: Total number of bytes transmitted over the network
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1000000-50000000
+        operation: inc
+
+  - name: network_errors_total
+    description: Total number of network errors
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-10
+        operation: inc
+
+  # Application-Specific Metrics
+  - name: user_active_sessions
+    description: Number of active user sessions
+    type: gauge
+    labels: [user_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 10-200
+        operation: set
+        labels:
+          user_type: premium
+      - eval_time: 3600
+        interval: 1
+        values: 50-500
+        operation: set
+        labels:
+          user_type: free
+
+  - name: failed_logins_total
+    description: Total number of failed login attempts
+    type: counter
+    labels: [region]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1-10
+        operation: inc
+        labels:
+          region: US
+      - eval_time: 3600
+        interval: 1
+        values: 1-8
+        operation: inc
+        labels:
+          region: EU
+
+  - name: purchase_value_total
+    description: Total value of purchases
+    type: gauge
+    labels: [currency]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 1000-100000
+        operation: set
+        labels:
+          currency: USD
+      - eval_time: 3600
+        interval: 1
+        values: 800-50000
+        operation: set
+        labels:
+          currency: EUR
+
+  # Queue Metrics
+  - name: background_jobs_pending
+    description: Number of pending background jobs
+    type: gauge
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-500
+        operation: set
+
+  - name: background_jobs_failed_total
+    description: Total number of failed background jobs
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-20
+        operation: inc
+
+  - name: background_job_processing_duration_seconds
+    description: Duration of background job processing in seconds
+    type: summary
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.1-2.0
+        operation: observe
+
+  # Event Metrics
+  - name: user_events_total
+    description: Total number of user-generated events
+    type: counter
+    labels: [event_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 50-500
+        operation: inc
+        labels:
+          event_type: click
+      - eval_time: 3600
+        interval: 1
+        values: 10-200
+        operation: inc
+        labels:
+          event_type: share
+
+  # Custom Metrics
+  - name: api_throttling_count
+    description: Number of times API throttling occurred
+    type: counter
+    labels: [api_name]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-5
+        operation: inc
+        labels:
+          api_name: payment_service
+      - eval_time: 3600
+        interval: 1
+        values: 0-3
+        operation: inc
+        labels:
+          api_name: analytics_service
+
+  - name: deployment_count
+    description: Total number of deployments
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-2
+        operation: inc
+
+  - name: build_failures_total
+    description: Total number of build failures
+    type: counter
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-5
+        operation: inc
