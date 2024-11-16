@@ -181,9 +181,8 @@ class RAGManager:
         """Search the vector store"""
         # Search only in the docs collection, not the metadata
         return self.docs_collection.similarity_search(
-            query,
+            query=query,
             k=k,
-            where={"is_metadata_record": {"$exists": False}}  # Exclude metadata records
         )
 
     def load_documents(self) -> List:

@@ -29,7 +29,6 @@ if __name__ == "__main__":
     print("Loading runbooks")
     rag_manager.load_documents()
 
-
     @tool
     def retrieve_context(query: str) -> str:
         """
@@ -41,6 +40,7 @@ if __name__ == "__main__":
         results = rag_manager.search(query, k=3)
         return "\n".join([doc.page_content for doc in results])
 
+    retrieve_context.cache_function = lambda a, b: False
 
     @tool
     def list_metrics(substring: Optional[str] = None) -> List[str]:
