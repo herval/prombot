@@ -1,3 +1,4 @@
+import json
 import os
 from textwrap import dedent
 from typing import List, Optional
@@ -66,12 +67,21 @@ if __name__ == "__main__":
     @tool
     def metric_values(metric_name: str):
         """
-        Get the current values of a metric
+        Get the current values of a metric.
+
+        Any time you get the metric values, store the values in memory for future reference - you can ask retrieve_context to get you the "metric values for <metric_name>" document in order to get the correct names of each potential parameter.
+        This is useful before you write a query, so that you don't write arbitrary queries that may not return any data.
 
         :param metric_name: Name of the metric
-        :return: List of values
+        :return: List of values. DO NOT modify keys or values of any element of the list, or you will break queries!
         """
         val = prom.get_current_metric_value(metric_name)
+
+        rag_manager.add_document(
+            "metric values for " + metric_name,
+            json.dumps(val),
+        )
+
         return val
         # metric_df = MetricSnapshotDataFrame(val)
         # return tabulate(metric_df, headers='keys', tablefmt='grid')
@@ -79,6 +89,31 @@ if __name__ == "__main__":
 
     metric_values.cache_function = lambda a, b: False
 
+    @tool
+    def save_preferences(preferences: str):
+        """
+        Save user preferences based on the conversation context.
+
+        Format preferences as a string, one per line. Format in a way you can easily understand. Don't use complex formats such as JSON or YAML.
+
+        :param preferences: User preferences
+        """
+        rag_manager.add_document(
+            "USER_PREFERENCES",
+            preferences,
+        )
+
+    def get_preferences() -> str:
+        """
+        Retrieve user preferences
+
+        :return: User preferences
+        """
+        data = rag_manager.get_document_by_identifier("USER_PREFERENCES")
+        if data is None:
+            return ""
+
+        return json.dumps(data['content'])
 
     @tool
     def query(promql: str):
@@ -98,6 +133,7 @@ if __name__ == "__main__":
 
     tools = [
         retrieve_context,
+        save_preferences,
     ]
 
     if prom_server_url is not None:
@@ -141,18 +177,43 @@ if __name__ == "__main__":
 
     chat = Task(
         description=dedent("""
-        Respond to user queries and perform actions using tools.
+        Respond to user queries and perform actions using tools. Always take the user preferences in consideration when responding. 
         
-        Whenever you make a query, always include the promql query in the response.
+        Preferences may include the user's preferred language, style, specific requirements around what it expects you to do, timeframes to prioritize when writing queries, etc.
+        
+        ***When you make any query, always include the promql query in the response to the user, so they know what you did***
         
         Whenever you get data from Prometheus, always include the data in a well-formatted table as part of the response too.
         
-        If your response includes too many metrics, consider summarizing the data or providing a high-level overview.
+        Don't alter the data you get from Prometheus. Always return the data as-is. Eg if you hae a metric price_assets with labels 'usd' and 'brl, each with a value (eg 100, 200),
+        return the data as-is, don't change the labels or values. This is what the table could look like:
+        
+        | price_assets{{currency=\"usd\"}} | price_assets{{currency=\"brl\"}} |
+        |------------------------------|------------------------------|
+        | 100                          | 200                          |
+        
+        or:
+        
+        | currency | value        |
+        |----------|--------------|
+        | usd      | 100          |
+        | brl      | 200          |
+        
+        
+        
+        If your response includes too many metrics, consider summarizing the data or providing a high-level overview, instead of outputting the entire list!
+
+        Consider updating the preferences based on the user input and the context of the conversation.
        
         ---
         
         Current chat context:
         {context} 
+        
+        ---
+        
+        User preferences:
+        {preferences}
         
         ---
         
@@ -173,12 +234,14 @@ if __name__ == "__main__":
 
     context = []
 
-    # print(crew.usage_metrics)
+    print("Preferences: ", get_preferences())
+
     print("Ask anything >")
     while True:
         question = input()
         res = crew.kickoff({
             'user_input': question,
+            'preferences': get_preferences(),
             'context': '\n'.join(context)[-10000:],
         })
         print(res.raw)

@@ -74,21 +74,25 @@ class RAGManager:
     def get_document_by_identifier(self, identifier: str) -> Optional[Dict]:
         """Retrieve document information by identifier"""
         results = self.metadata_collection.get(
-            where={
-                "identifier": identifier,
-                "is_metadata_record": True
-            },
+            where={"identifier": {"$eq": identifier}},
             include=["documents", "metadatas"]
         )
 
-        if not results['ids']:
+        # Then filter for metadata records
+        matching_results = [
+            (doc, meta)
+            for doc, meta in zip(results['documents'], results['metadatas'])
+            if meta.get('is_metadata_record') is True
+        ]
+
+        if not matching_results:
             return None
 
-        metadata = results['metadatas'][0]
+        doc, metadata = matching_results[0]
         return {
             "identifier": identifier,
-            "content": results['documents'][0],
-            "metadata": json.loads(metadata.get("original_metadata", "{}")),  # Deserialize metadata
+            "content": doc,
+            "metadata": json.loads(metadata.get("original_metadata", "{}")),
             "processed_date": metadata.get("processed_date"),
             "doc_hash": metadata.get("doc_hash")
         }
