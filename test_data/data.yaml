@@ -3,7 +3,7 @@ config:
   - name: http_requests_total
     description: Total number of HTTP requests received
     type: counter
-    labels: [method, endpoint, status]
+    labels: [method, endpoint, status, api_version, client_type]
     sequence:
       - eval_time: 3600
         interval: 1
@@ -11,16 +11,41 @@ config:
         operation: inc
         labels:
           method: GET
-          endpoint: /api/v1/resource
+          endpoint: /api/v2/users
           status: 200
+          api_version: v2
+          client_type: mobile
       - eval_time: 3600
         interval: 1
         values: 1-3
         operation: inc
         labels:
           method: POST
-          endpoint: /api/v1/resource
+          endpoint: /api/v2/orders
           status: 201
+          api_version: v2
+          client_type: web
+      - eval_time: 3600
+        interval: 1
+        values: 1-4
+        operation: inc
+        labels:
+          method: PUT
+          endpoint: /api/v2/products
+          status: 200
+          api_version: v2
+          client_type: desktop
+      - eval_time: 3600
+        interval: 1
+        values: 0-2
+        operation: inc
+        labels:
+          method: DELETE
+          endpoint: /api/v2/cart
+          status: 204
+          api_version: v2
+          client_type: tablet
+
 
   - name: http_request_duration_seconds
     description: Duration of HTTP requests in seconds
@@ -350,26 +375,104 @@ config:
           game_mode: team_deathmatch
           region: EU
 
+  # Smart City Metrics (Extended Urban Features)
+  - name: smart_city_metrics
+    description: Various smart city monitoring metrics
+    type: gauge
+    labels: [metric_type, district, time_of_day]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.1-0.9
+        operation: set
+        labels:
+          metric_type: traffic_density
+          district: financial_district
+          time_of_day: rush_hour
+      - eval_time: 3600
+        interval: 1
+        values: 0.2-0.8
+        operation: set
+        labels:
+          metric_type: parking_occupancy
+          district: shopping_center
+          time_of_day: afternoon
+      - eval_time: 3600
+        interval: 1
+        values: 0.3-1.0
+        operation: set
+        labels:
+          metric_type: air_quality_index
+          district: industrial_zone
+          time_of_day: midday
+      - eval_time: 3600
+        interval: 1
+        values: 0.0-0.5
+        operation: set
+        labels:
+          metric_type: noise_level
+          district: residential_area
+          time_of_day: night
+      - eval_time: 3600
+        interval: 1
+        values: 0.4-0.95
+        operation: set
+        labels:
+          metric_type: public_transport_load
+          district: transit_hub
+          time_of_day: peak_hours
+
   # IoT Device Metrics
   - name: smart_device_temperature_celsius
     description: Temperature readings from IoT devices
     type: gauge
-    labels: [device_type, location]
+    labels: [device_type, location, building_type, zone]
     sequence:
       - eval_time: 3600
         interval: 1
         values: 18-25
         operation: set
         labels:
-          device_type: thermostat
-          location: living_room
+          device_type: smart_thermostat
+          location: data_center
+          building_type: commercial
+          zone: server_room
       - eval_time: 3600
         interval: 1
         values: 150-180
         operation: set
         labels:
-          device_type: oven
-          location: kitchen
+          device_type: industrial_sensor
+          location: steel_mill
+          building_type: industrial
+          zone: furnace_area
+      - eval_time: 3600
+        interval: 1
+        values: 2-8
+        operation: set
+        labels:
+          device_type: refrigeration_monitor
+          location: supermarket
+          building_type: retail
+          zone: dairy_section
+      - eval_time: 3600
+        interval: 1
+        values: 20-30
+        operation: set
+        labels:
+          device_type: environmental_sensor
+          location: museum
+          building_type: cultural
+          zone: art_gallery
+      - eval_time: 3600
+        interval: 1
+        values: 15-22
+        operation: set
+        labels:
+          device_type: climate_controller
+          location: hospital
+          building_type: healthcare
+          zone: operating_room
 
   # AI Model Metrics
   - name: model_inference_confidence
@@ -404,20 +507,48 @@ config:
   - name: wind_speed_kmh
     description: Current wind speed in kilometers per hour
     type: gauge
-    labels: [location]
+    labels: [location, altitude, terrain_type]
     sequence:
       - eval_time: 3600
         interval: 1
         values: 0-120
         operation: set
         labels:
-          location: mountain_peak
+          location: mount_kilimanjaro
+          altitude: very_high
+          terrain_type: mountain
       - eval_time: 3600
         interval: 1
-        values: 0-40
+        values: 10-80
         operation: set
         labels:
-          location: valley
+          location: amazon_rainforest
+          altitude: low
+          terrain_type: forest
+      - eval_time: 3600
+        interval: 1
+        values: 20-160
+        operation: set
+        labels:
+          location: antarctica_research_station
+          altitude: high
+          terrain_type: ice_shelf
+      - eval_time: 3600
+        interval: 1
+        values: 5-70
+        operation: set
+        labels:
+          location: great_barrier_reef
+          altitude: sea_level
+          terrain_type: marine
+      - eval_time: 3600
+        interval: 1
+        values: 15-90
+        operation: set
+        labels:
+          location: atacama_desert
+          altitude: medium
+          terrain_type: desert
 
   # Content Delivery Network Metrics
   - name: cdn_cache_age_seconds
@@ -439,10 +570,10 @@ config:
           content_type: image
 
   # Cryptocurrency Exchange Metrics
-  - name: trading_volume_btc
-    description: Trading volume in Bitcoin
+  - name: trading_volume_crypto
+    description: Trading volume in various cryptocurrencies
     type: counter
-    labels: [trading_pair]
+    labels: [trading_pair, exchange, market_type]
     sequence:
       - eval_time: 3600
         interval: 1
@@ -450,12 +581,40 @@ config:
         operation: inc
         labels:
           trading_pair: BTC_USD
+          exchange: binance
+          market_type: spot
       - eval_time: 3600
         interval: 1
-        values: 0.05-5
+        values: 1-100
         operation: inc
         labels:
-          trading_pair: BTC_EUR
+          trading_pair: ETH_USD
+          exchange: coinbase
+          market_type: futures
+      - eval_time: 3600
+        interval: 1
+        values: 100-1000
+        operation: inc
+        labels:
+          trading_pair: DOGE_USD
+          exchange: kraken
+          market_type: margin
+      - eval_time: 3600
+        interval: 1
+        values: 0.01-1
+        operation: inc
+        labels:
+          trading_pair: SOL_USD
+          exchange: ftx
+          market_type: spot
+      - eval_time: 3600
+        interval: 1
+        values: 10-500
+        operation: inc
+        labels:
+          trading_pair: ADA_USD
+          exchange: huobi
+          market_type: futures
 
   # Smart City Metrics
   - name: traffic_congestion_index
@@ -495,6 +654,53 @@ config:
         labels:
           dish_type: appetizer
 
+  # Space Station Metrics (Extended Systems)
+  - name: space_station_vitals
+    description: Various space station system metrics
+    type: gauge
+    labels: [system_type, module, priority]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 19.5-21.5
+        operation: set
+        labels:
+          system_type: oxygen_level
+          module: habitation
+          priority: critical
+      - eval_time: 3600
+        interval: 1
+        values: 20-25
+        operation: set
+        labels:
+          system_type: temperature
+          module: greenhouse
+          priority: high
+      - eval_time: 3600
+        interval: 1
+        values: 45-55
+        operation: set
+        labels:
+          system_type: humidity
+          module: science_lab
+          priority: medium
+      - eval_time: 3600
+        interval: 1
+        values: 0-100
+        operation: set
+        labels:
+          system_type: power_level
+          module: solar_array
+          priority: critical
+      - eval_time: 3600
+        interval: 1
+        values: 0-15
+        operation: set
+        labels:
+          system_type: radiation_level
+          module: exterior_hull
+          priority: high
+
   # Space Station Metrics
   - name: oxygen_level_percentage
     description: Oxygen levels in different modules
@@ -514,6 +720,54 @@ config:
         labels:
           module: research_lab
 
+
+  # Renewable Energy Metrics (Extended Sources)
+  - name: renewable_energy_metrics
+    description: Metrics for various renewable energy sources
+    type: gauge
+    labels: [energy_type, location, weather_condition]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.15-0.22
+        operation: set
+        labels:
+          energy_type: solar_panel
+          location: desert_farm
+          weather_condition: sunny
+      - eval_time: 3600
+        interval: 1
+        values: 0.3-0.8
+        operation: set
+        labels:
+          energy_type: wind_turbine
+          location: offshore_array
+          weather_condition: windy
+      - eval_time: 3600
+        interval: 1
+        values: 0.4-0.9
+        operation: set
+        labels:
+          energy_type: hydroelectric
+          location: mountain_dam
+          weather_condition: rainy
+      - eval_time: 3600
+        interval: 1
+        values: 0.6-0.95
+        operation: set
+        labels:
+          energy_type: geothermal
+          location: volcanic_region
+          weather_condition: any
+      - eval_time: 3600
+        interval: 1
+        values: 0.2-0.7
+        operation: set
+        labels:
+          energy_type: tidal_power
+          location: coastal_station
+          weather_condition: stormy
+
   # Renewable Energy Metrics
   - name: solar_panel_efficiency
     description: Current efficiency of solar panels
@@ -532,6 +786,53 @@ config:
         operation: set
         labels:
           panel_array: ground
+
+  # Virtual Reality Metrics (Extended Experiences)
+  - name: vr_experience_metrics
+    description: Metrics for various VR experiences
+    type: gauge
+    labels: [experience_type, platform, user_type]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-100
+        operation: set
+        labels:
+          experience_type: gaming
+          platform: oculus
+          user_type: casual
+      - eval_time: 3600
+        interval: 1
+        values: 0-50
+        operation: set
+        labels:
+          experience_type: training
+          platform: vive
+          user_type: professional
+      - eval_time: 3600
+        interval: 1
+        values: 0-75
+        operation: set
+        labels:
+          experience_type: social
+          platform: psvr
+          user_type: regular
+      - eval_time: 3600
+        interval: 1
+        values: 0-25
+        operation: set
+        labels:
+          experience_type: education
+          platform: mixed_reality
+          user_type: student
+      - eval_time: 3600
+        interval: 1
+        values: 0-40
+        operation: set
+        labels:
+          experience_type: therapy
+          platform: index
+          user_type: patient
 
   # AI Training Pipeline Metrics
   - name: training_loss_value
@@ -570,6 +871,53 @@ config:
         operation: inc
         labels:
           app_type: educational
+
+  # Coffee Shop IoT Metrics (Extended Operations)
+  - name: coffee_shop_metrics
+    description: Extended metrics for coffee shop operations
+    type: gauge
+    labels: [metric_type, location, time_period]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-50
+        operation: set
+        labels:
+          metric_type: beans_stock_kg
+          location: main_storage
+          time_period: morning
+      - eval_time: 3600
+        interval: 1
+        values: 60-100
+        operation: set
+        labels:
+          metric_type: grinder_efficiency
+          location: barista_station
+          time_period: peak_hours
+      - eval_time: 3600
+        interval: 1
+        values: 85-98
+        operation: set
+        labels:
+          metric_type: water_quality
+          location: filtration_system
+          time_period: daily
+      - eval_time: 3600
+        interval: 1
+        values: 0-200
+        operation: set
+        labels:
+          metric_type: drinks_queue
+          location: pos_system
+          time_period: lunch_rush
+      - eval_time: 3600
+        interval: 1
+        values: 18-25
+        operation: set
+        labels:
+          metric_type: ambient_temperature
+          location: seating_area
+          time_period: afternoon
 
   # Coffee Shop IoT Metrics
   - name: coffee_beans_remaining_kg
@@ -652,6 +1000,53 @@ config:
           service_name: user-service
           downstream_service: auth-service
           failure_type: connection_failure
+
+  # Service Mesh Metrics (Extended Patterns)
+  - name: service_mesh_metrics
+    description: Extended service mesh telemetry
+    type: histogram
+    labels: [pattern_type, service_tier, protocol]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0.001-0.1
+        operation: observe
+        labels:
+          pattern_type: circuit_breaker
+          service_tier: frontend
+          protocol: http2
+      - eval_time: 3600
+        interval: 1
+        values: 0.002-0.2
+        operation: observe
+        labels:
+          pattern_type: retry
+          service_tier: backend
+          protocol: grpc
+      - eval_time: 3600
+        interval: 1
+        values: 0.003-0.3
+        operation: observe
+        labels:
+          pattern_type: timeout
+          service_tier: middleware
+          protocol: tcp
+      - eval_time: 3600
+        interval: 1
+        values: 0.004-0.4
+        operation: observe
+        labels:
+          pattern_type: bulkhead
+          service_tier: database
+          protocol: mysql
+      - eval_time: 3600
+        interval: 1
+        values: 0.005-0.5
+        operation: observe
+        labels:
+          pattern_type: rate_limit
+          service_tier: cache
+          protocol: redis
 
   # Service Mesh Metrics
   - name: mesh_request_duration_seconds
@@ -737,6 +1132,53 @@ config:
         operation: observe
         labels:
           service_name: order-service
+
+  # Database Metrics (Extended Types)
+  - name: database_metrics
+    description: Extended metrics for different database types
+    type: gauge
+    labels: [database_type, operation_type, consistency_level]
+    sequence:
+      - eval_time: 3600
+        interval: 1
+        values: 0-100
+        operation: set
+        labels:
+          database_type: postgresql
+          operation_type: write
+          consistency_level: strong
+      - eval_time: 3600
+        interval: 1
+        values: 0-200
+        operation: set
+        labels:
+          database_type: mongodb
+          operation_type: read
+          consistency_level: eventual
+      - eval_time: 3600
+        interval: 1
+        values: 0-150
+        operation: set
+        labels:
+          database_type: cassandra
+          operation_type: scan
+          consistency_level: quorum
+      - eval_time: 3600
+        interval: 1
+        values: 0-300
+        operation: set
+        labels:
+          database_type: redis
+          operation_type: cache
+          consistency_level: weak
+      - eval_time: 3600
+        interval: 1
+        values: 0-250
+        operation: set
+        labels:
+          database_type: elasticsearch
+          operation_type: search
+          consistency_level: default
 
   # Message Queue Metrics
   - name: message_queue_depth
