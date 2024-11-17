@@ -1,12 +1,14 @@
 import json
 import os
+from datetime import datetime
 from textwrap import dedent
 from typing import List, Optional
 
 from crewai import Agent, Crew, Task, Process, LLM
 from crewai_tools import tool
 from dotenv import load_dotenv
-from prometheus_api_client import PrometheusConnect
+from prometheus_api_client import PrometheusConnect, MetricRangeDataFrame, MetricSnapshotDataFrame
+from tabulate import tabulate
 
 from prombot.rag_manager import RAGManager
 
@@ -82,9 +84,8 @@ if __name__ == "__main__":
             json.dumps(val),
         )
 
-        return val
-        # metric_df = MetricSnapshotDataFrame(val)
-        # return tabulate(metric_df, headers='keys', tablefmt='grid')
+        metric_df = MetricSnapshotDataFrame(val)
+        return tabulate(metric_df, headers='keys', tablefmt='grid')
 
 
     metric_values.cache_function = lambda a, b: False
@@ -116,9 +117,61 @@ if __name__ == "__main__":
         return json.dumps(data['content'])
 
     @tool
-    def query(promql: str):
+    def query_range(promql: str, start_time: str, end_time: str, step: str) -> str:
         """
-        Query Prometheus using PromQL
+        Query for a range of values for metrics using PromQL
+
+        :param promql: PromQL query
+        :param start_time: (str) specifies the query range start time. ALWAYS use ISO8601 format (eg. 2022-01-01T00:00:00). Use "now" for current time.
+        :param end_time: (str) specifies the query range end time. ALWAYS use ISO8601 format (eg. 2022-01-01T00:00:00). Use "now" for current time.
+        :param step: (str) Query resolution step width in duration format (eg. 15s, 1m, 1h)
+        :return: Query result
+        """
+
+        def format_time(time: str) -> datetime:
+            if time == "now":
+                return datetime.now()
+            return datetime.fromisoformat(time)
+
+        def format_timeseries_tables(df):
+            # Reset index to make timestamp a regular column
+            df = df.reset_index()
+
+            # Get all columns except timestamp and value
+            group_columns = [col for col in df.columns if col not in ['timestamp', 'value']]
+
+            # Create a pivot table
+            # First create the aggregation column if it doesn't exist
+            if 'aggregation' not in df.columns:
+                df['aggregation'] = df[group_columns].apply(lambda x: ', '.join([f"{col}={val}" for col, val in zip(group_columns, x)]), axis=1)
+
+            # Pivot (using actual timestamps)
+            pivot_df = df.pivot(index='aggregation', columns='timestamp', values='value')
+
+            # Reset index to make 'aggregation' a regular column
+            pivot_df.reset_index(inplace=True)
+
+            return tabulate(pivot_df, headers='keys', tablefmt='psql')
+
+        val = prom.custom_query_range(
+            query=promql,
+            start_time=format_time(start_time),
+            end_time=format_time(end_time),
+            step=step,
+        )
+
+        df = MetricRangeDataFrame(val)
+
+        return format_timeseries_tables(df)
+
+
+
+
+
+    @tool
+    def query_value(promql: str):
+        """
+        Query discrete values using Prometheus using PromQL
 
         :param promql: PromQL query
         :return: Query result
@@ -129,7 +182,7 @@ if __name__ == "__main__":
         # return tabulate(metric_df, headers='keys', tablefmt='grid')
 
 
-    query.cache_function = lambda a, b: False
+    query_value.cache_function = lambda a, b: False
 
     tools = [
         retrieve_context,
@@ -141,7 +194,8 @@ if __name__ == "__main__":
         tools.extend([
             list_metrics,
             metric_values,
-            query,
+            query_value,
+            query_range,
         ])
 
     if model.startswith('openai/'):
@@ -188,22 +242,39 @@ if __name__ == "__main__":
         Don't alter the data you get from Prometheus. Always return the data as-is. Eg if you hae a metric price_assets with labels 'usd' and 'brl, each with a value (eg 100, 200),
         return the data as-is, don't change the labels or values. This is what the table could look like:
         
+        +----------------------------------+----------------------------------+
         | price_assets{{currency=\"usd\"}} | price_assets{{currency=\"brl\"}} |
-        |------------------------------|------------------------------|
-        | 100                          | 200                          |
+        |----------------------------------|----------------------------------|
+        | 100                              | 200                              |
+        +----------------------------------+----------------------------------+
         
         or:
         
+        +----------|--------------+
         | currency | value        |
         |----------|--------------|
         | usd      | 100          |
         | brl      | 200          |
+        +----------|--------------+
+        
+        You can also output the data in a different format, as long as it's clear and easy to understand. This is an example of a range of values over time:
+        
+        __name__=temperature_celsius
+        +----------------------+---------------------------------------------------+
+        |  timestamp           | building_type=commercial | building_type=cultural |
+        |----------------------+---------------------------------------------------|
+        |  2024-11-16 22:44:50 |                       19 |                     24 |
+        |  2024-11-16 22:45:50 |                       24 |                     24 |
+        +----------------------+--------------------------+------------------------+
+
         
         
         
         If your response includes too many metrics, consider summarizing the data or providing a high-level overview, instead of outputting the entire list!
 
         Consider updating the preferences based on the user input and the context of the conversation.
+        
+        Current time is: {time}
        
         ---
         
@@ -234,6 +305,7 @@ if __name__ == "__main__":
 
     context = []
 
+
     print("Preferences: ", get_preferences())
 
     print("Ask anything >")
@@ -243,6 +315,7 @@ if __name__ == "__main__":
             'user_input': question,
             'preferences': get_preferences(),
             'context': '\n'.join(context)[-10000:],
+            'time': datetime.now().isoformat(),
         })
         print(res.raw)
         context.extend([
