@@ -4,6 +4,7 @@ from datetime import datetime
 from textwrap import dedent
 from typing import List, Optional
 
+import pandas as pd
 from crewai import Agent, Crew, Task, Process, LLM
 from crewai_tools import tool
 from dotenv import load_dotenv
@@ -32,6 +33,7 @@ if __name__ == "__main__":
     print("Loading runbooks")
     rag_manager.load_documents()
 
+
     @tool
     def retrieve_context(query: str) -> str:
         """
@@ -43,27 +45,36 @@ if __name__ == "__main__":
         results = rag_manager.search(query, k=3)
         return "\n".join([doc.page_content for doc in results])
 
+
     retrieve_context.cache_function = lambda a, b: False
 
+
     @tool
-    def list_metrics(substring: Optional[str] = None) -> List[str]:
+    def list_metrics(substring: Optional[str] = None) -> str:
         """
         List all the metrics available in Prometheus. You can narrow down the list by providing a substring to match metric names.
 
         If you can't find any metrics containing the substring, consider listing without a substring!
 
         :param name_pattern: Optional pattern to filter the metrics by a part of the name
-        :return: List of metric names
+        :return: A summary of available metric names, as well as potential cases where the substring matches a metric label instead.
         """
 
-        if(substring == "None"):
+        if (substring == "None"):
             substring = None
 
+        # TODO figure out how to cache this?
         metrics = prom.all_metrics()
         if substring is not None:
             metrics = [m for m in metrics if substring in m]
 
-        return metrics
+        res = "Found metrics:\n" + ", ".join(metrics)
+
+        vals = rag_manager.search("metrics containing labels like: " + substring, k=5)
+        if len(vals) > 0:
+            res += "\n\nFound potential metric values:\n" + "\n".join([doc.page_content for doc in vals])
+
+        return res
 
 
     @tool
@@ -90,6 +101,7 @@ if __name__ == "__main__":
 
     metric_values.cache_function = lambda a, b: False
 
+
     @tool
     def save_preferences(preferences: str):
         """
@@ -104,6 +116,7 @@ if __name__ == "__main__":
             preferences,
         )
 
+
     def get_preferences() -> str:
         """
         Retrieve user preferences
@@ -115,6 +128,7 @@ if __name__ == "__main__":
             return ""
 
         return json.dumps(data['content'])
+
 
     @tool
     def query_range(promql: str, start_time: str, end_time: str, step: str) -> str:
@@ -134,24 +148,82 @@ if __name__ == "__main__":
             return datetime.fromisoformat(time)
 
         def format_timeseries_tables(df):
-            # Reset index to make timestamp a regular column
+            # Reset index if timestamp is index
             df = df.reset_index()
 
-            # Get all columns except timestamp and value
-            group_columns = [col for col in df.columns if col not in ['timestamp', 'value']]
+            # Get start, end times and create step
+            start = df['timestamp'].min()
+            end = df['timestamp'].max()
 
-            # Create a pivot table
-            # First create the aggregation column if it doesn't exist
-            if 'aggregation' not in df.columns:
-                df['aggregation'] = df[group_columns].apply(lambda x: ', '.join([f"{col}={val}" for col, val in zip(group_columns, x)]), axis=1)
+            # Create timestamps column names, but limit to 6 slots
+            timestamps = sorted(df['timestamp'].unique())
+            max_slots = 10
 
-            # Pivot (using actual timestamps)
-            pivot_df = df.pivot(index='aggregation', columns='timestamp', values='value')
+            if len(timestamps) > max_slots:
+                # Keep first 3 and last 3
+                selected_timestamps = timestamps[:3] + timestamps[-3:]
+                truncated = True
+            else:
+                selected_timestamps = timestamps
+                truncated = False
 
-            # Reset index to make 'aggregation' a regular column
-            pivot_df.reset_index(inplace=True)
+            # Create t_number mapping
+            timestamp_map = {}
+            for i, t in enumerate(selected_timestamps):
+                if truncated and i == 3:
+                    # Start counting from n-2 for the last 3 timestamps
+                    i = len(timestamps) - 3
+                timestamp_map[t] = f't{i}'
 
-            return tabulate(pivot_df, headers='keys', tablefmt='psql')
+            # Create row labels from all columns except timestamp and value
+            label_cols = [col for col in df.columns if col not in ['timestamp', 'value']]
+            df['row_label'] = df[label_cols].apply(
+                lambda x: ', '.join([f"{col}={val}" for col, val in zip(label_cols, x) if not pd.isna(val)]),
+                axis=1
+            )
+
+            # Header info
+            header = (
+                f"start: {start}\n"
+                f"end: {end}\n"
+                f"step: {step}\n"
+            )
+
+            output = [header]
+
+            # Create a table for each unique row label
+            for label in df['row_label'].unique():
+                label_df = df[df['row_label'] == label]
+
+                # Create a single row with values for each timestamp
+                row_data = []
+                headers = []
+
+                # Add first 3 timestamps
+                for i, ts in enumerate(selected_timestamps[:3]):
+                    headers.append(f't{i}')
+                    value = label_df[label_df['timestamp'] == ts]['value'].values
+                    row_data.append(value[0] if len(value) > 0 else '')
+
+                if truncated:
+                    headers.append('...')
+                    row_data.append('')
+
+                    # Add last 3 timestamps
+                    for i, ts in enumerate(selected_timestamps[-3:]):
+                        headers.append(f't{len(timestamps)-3+i}')
+                        value = label_df[label_df['timestamp'] == ts]['value'].values
+                        row_data.append(value[0] if len(value) > 0 else '')
+
+                # Create a single-row DataFrame for this label
+                table_df = pd.DataFrame([row_data], columns=headers)
+
+                # Add to output
+                output.append(label)
+                output.append(tabulate(table_df, headers='keys', tablefmt='psql', floatfmt='.2f', showindex=False))
+                output.append("")  # empty line between tables
+
+            return "\n".join(output)
 
         val = prom.custom_query_range(
             query=promql,
@@ -163,9 +235,6 @@ if __name__ == "__main__":
         df = MetricRangeDataFrame(val)
 
         return format_timeseries_tables(df)
-
-
-
 
 
     @tool
@@ -259,15 +328,17 @@ if __name__ == "__main__":
         
         You can also output the data in a different format, as long as it's clear and easy to understand. This is an example of a range of values over time:
         
-        __name__=temperature_celsius
-        +----------------------+---------------------------------------------------+
-        |  timestamp           | building_type=commercial | building_type=cultural |
-        |----------------------+---------------------------------------------------|
-        |  2024-11-16 22:44:50 |                       19 |                     24 |
-        |  2024-11-16 22:45:50 |                       24 |                     24 |
-        +----------------------+--------------------------+------------------------+
+        start: 2024-11-16 22:44:50
+        end: 2024-11-16 22:45:50
+        step: 1m
+        +---------------------------+----+----+-----+----+
+        |                           | t0 | t1 | ... | tn |
+        |---------------------------+----+----+-----+----+
+        |  building_type=commercial | 19 | 24 | ... | 24 |
+        |  building_type=cultural   | 24 | 24 | ... | 24 |
+        +---------------------------+----+----+-----+----+
 
-        
+        If a tool returns a formatted table, always include the table as-is in the response.
         
         
         If your response includes too many metrics, consider summarizing the data or providing a high-level overview, instead of outputting the entire list!
@@ -304,7 +375,6 @@ if __name__ == "__main__":
     )
 
     context = []
-
 
     print("Preferences: ", get_preferences())
 
